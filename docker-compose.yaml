@@ -1,0 +1,10 @@
+services:
+  mysql:
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=AirForceOne'
+      - 'MYSQL_PASSWORD=parola'
+      - 'MYSQL_ROOT_PASSWORD=parola'
+      - 'MYSQL_USER=myuser'
+    ports:
+      - '3306:3306'
