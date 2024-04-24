@@ -1,23 +1,22 @@
-package com.pweb.AirForceOne.model;
+package com.pweb.AirForceOne.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class CabinCrewMember {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ClientDto {
 
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z ]*$", message = "Name can only contain letters and spaces")
@@ -34,9 +33,8 @@ public class CabinCrewMember {
             message = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one digit.")
     private String password;
 
-    @NotBlank
-    private String position;
+    @JsonIgnore
+    @OneToMany(mappedBy = "client")
+    private Set<BookingDto> bookings;
 
-    @OneToMany(mappedBy = "cabinCrewMember")
-    private Set<Schedule> schedules;
 }

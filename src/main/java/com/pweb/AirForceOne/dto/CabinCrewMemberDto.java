@@ -1,8 +1,10 @@
-package com.pweb.AirForceOne.model;
+package com.pweb.AirForceOne.dto;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class CabinCrewMember {
+public class CabinCrewMemberDto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,5 +40,5 @@ public class CabinCrewMember {
     private String position;
 
     @OneToMany(mappedBy = "cabinCrewMember")
-    private Set<Schedule> schedules;
+    private Set<ScheduleDto> schedules;
 }
