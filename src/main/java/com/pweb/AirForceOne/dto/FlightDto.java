@@ -1,37 +1,32 @@
 package com.pweb.AirForceOne.dto;
 
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.ZonedDateTime;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 public class FlightDto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @NotBlank
     private String departureLocation;
+    @NotBlank
     private String arrivalLocation;
+
+    @NotNull
     private ZonedDateTime departureDate;
+
+    @NotNull
     private ZonedDateTime arrivalDate;
+
+    @Min(value = 1)
     private int capacity;
+
+    @Min(value = 0)
     private int occupiedSeats;
-
-    @OneToMany(mappedBy = "flight")
-    private Set<BookingDto> bookings;
-
-    @ManyToOne
-    @JoinColumn(name = "aeronava_id")
-    private AeronavaDto aeronava;
-
-    @OneToMany(mappedBy = "flight")
-    private Set<ScheduleDto> schedules;
 }

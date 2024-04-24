@@ -14,13 +14,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 public class CabinCrewMemberDto {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z ]*$", message = "Name can only contain letters and spaces")
     private String lastName;
@@ -38,7 +32,4 @@ public class CabinCrewMemberDto {
 
     @NotBlank
     private String position;
-
-    @OneToMany(mappedBy = "cabinCrewMember")
-    private Set<ScheduleDto> schedules;
 }

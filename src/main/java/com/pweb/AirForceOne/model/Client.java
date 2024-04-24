@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Data
@@ -20,14 +21,14 @@ public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true)
     private String lastName;
     private String firstName;
+    @Column(unique = true, updatable = false)
     private String email;
     private String password;
+    private ZonedDateTime createdAt;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Booking> bookings;
 }

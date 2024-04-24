@@ -1,10 +1,12 @@
 package com.pweb.AirForceOne.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,6 +16,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"bookings", "schedules", "aeronava"})
 @Entity
 public class Flight {
     @Id
@@ -27,13 +30,16 @@ public class Flight {
     private int capacity;
     private int occupiedSeats;
 
-    @OneToMany(mappedBy = "flight")
+    @JsonIgnore
+    @OneToMany(mappedBy = "flight", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Booking> bookings;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "aeronava_id")
+    @JoinColumn(name = "aeronava_id", referencedColumnName = "id", nullable = false)
     private Aeronava aeronava;
 
-    @OneToMany(mappedBy = "flight")
+    @JsonIgnore
+    @OneToMany(mappedBy = "flight", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Schedule> schedules;
 }
