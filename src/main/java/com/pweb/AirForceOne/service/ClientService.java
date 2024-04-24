@@ -28,6 +28,7 @@ public class ClientService {
         var newClient = modelMapper.map(clientDto, Client.class);
         newClient.setPassword(passwordEncoder.encode(newClient.getPassword()));
         newClient.setCreatedAt(ZonedDateTime.now());
+        clientRepository.save(newClient);
     }
 
     public void loginClient(ClientDto clientDto){
