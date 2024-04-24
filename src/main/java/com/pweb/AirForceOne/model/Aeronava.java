@@ -29,7 +29,4 @@ public class Aeronava {
 
     @OneToMany(mappedBy = "aeronava")
     private Set<Flight> flights;
-
-    @OneToMany(mappedBy = "aeronava")
-    private Set<Schedule> schedules;
 }

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.ZonedDateTime;
+
 
 @Data
 @AllArgsConstructor
@@ -17,6 +19,7 @@ public class Booking {
     private String currency;
     private String seat;
     private String status;
+    private ZonedDateTime bookingDate;
 
     @ManyToOne
     @JoinColumn(name = "client_id")

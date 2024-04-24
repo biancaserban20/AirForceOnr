@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Data
@@ -21,10 +22,8 @@ public class Flight {
 
     private String departureLocation;
     private String arrivalLocation;
-    private LocalDate departureDate;
-    private LocalTime departureTime;
-    private LocalDate arrivalDate;
-    private LocalTime arrivalTime;
+    private ZonedDateTime departureDate;
+    private ZonedDateTime arrivalDate;
     private int capacity;
     private int occupiedSeats;
 
@@ -35,5 +34,6 @@ public class Flight {
     @JoinColumn(name = "aeronava_id")
     private Aeronava aeronava;
 
-
+    @OneToMany(mappedBy = "flight")
+    private Set<Schedule> schedules;
 }

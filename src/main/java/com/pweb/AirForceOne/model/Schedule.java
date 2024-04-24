@@ -18,12 +18,10 @@ public class Schedule {
     private Long id;
     private String departureLocation;
     private String arrivalLocation;
-    private LocalTime departureTime;
-    private LocalTime arrivalTime;
 
     @ManyToOne
-    @JoinColumn(name = "aeronava_id")
-    private Aeronava aeronava;
+    @JoinColumn(name = "flight_id")
+    private Flight flight;
 
     @ManyToOne
     @JoinColumn(name = "cabincrewmember_id")

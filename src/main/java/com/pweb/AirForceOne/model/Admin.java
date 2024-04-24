@@ -22,7 +22,7 @@ public class Admin {
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "sediu_id")
+    @JoinColumn(name = "sediu_id", nullable = false)
     private Sediu sediu;
 
 }
