@@ -2,6 +2,8 @@ package com.pweb.AirForceOne.config.jwt;
 
 import com.pweb.AirForceOne.exceptions.ExpiredTokenException;
 import com.pweb.AirForceOne.exceptions.InvalidTokenException;
+import com.pweb.AirForceOne.repository.AdminRepository;
+import com.pweb.AirForceOne.repository.CabinCrewMemberRepository;
 import com.pweb.AirForceOne.repository.ClientRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,6 +20,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final ClientRepository clientRepository;
+    private final AdminRepository adminRepository;
+    private final CabinCrewMemberRepository cabinCrewMemberRepository;
     private final JwtTokenResolver jwtTokenResolver;
 
     @Override
@@ -33,20 +37,57 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String jwtToken = authHeader.substring(7);
-        var user = clientRepository.findByEmail(jwtTokenResolver.getEmailFromToken(jwtToken));
+        String role = jwtTokenResolver.getRoleFromToken(jwtToken);
+        String email = jwtTokenResolver.getEmailFromToken(jwtToken);
 
-        if (user.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "No user found for bearer token");
-            return;
+        // check for each role (client, admin, cabinCrewMember) if the email exists in the database
+
+        switch (role) {
+            case "client" -> {
+                var user = clientRepository.findByEmail(email);
+                if (user.isEmpty()) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "No client found for bearer token");
+                    return;
+                }
+                try {
+                    jwtTokenResolver.validateToken(jwtToken,
+                            user.get().getEmail(), role);
+                } catch (InvalidTokenException | ExpiredTokenException e) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+                    return;
+                }
+            }
+            case "admin" -> {
+                var user = adminRepository.findByEmail(email);
+                if (user.isEmpty()) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "No admin found for bearer token");
+                    return;
+                }
+
+                try {
+                    jwtTokenResolver.validateToken(jwtToken,
+                            user.get().getEmail(), role);
+                } catch (InvalidTokenException | ExpiredTokenException e) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+                    return;
+                }
+            }
+            case "cabinCrewMember" -> {
+                var user = cabinCrewMemberRepository.findByEmail(email);
+                if (user.isEmpty()) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "No cabin crew member found for bearer token");
+                    return;
+                }
+                try {
+                    jwtTokenResolver.validateToken(jwtToken,
+                            user.get().getEmail(), role);
+                } catch (InvalidTokenException | ExpiredTokenException e) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+                    return;
+                }
+            }
         }
 
-        try {
-            jwtTokenResolver.validateToken(jwtToken,
-                    user.get().getEmail());
-        } catch (InvalidTokenException | ExpiredTokenException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
-            return;
-        }
         filterChain.doFilter(request, response);
     }
 }

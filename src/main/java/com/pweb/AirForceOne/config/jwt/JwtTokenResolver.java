@@ -43,30 +43,62 @@ public class JwtTokenResolver implements Serializable {
                 .before(new Timestamp(System.currentTimeMillis()));
     }
 
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
+//    private String doGenerateToken(Map<String, Object> claims, String subject) {
+//        long generationTime = System.currentTimeMillis();
+//        Key key = Keys.hmacShaKeyFor(secret.getBytes());
+//        return Jwts.builder().setClaims(claims).setSubject(subject)
+//                .setIssuedAt(new Timestamp(generationTime))
+//                .setExpiration(new Timestamp(generationTime + JWT_TOKEN_VALIDITY))
+//                .signWith(key, SignatureAlgorithm.HS512).compact();
+//    }
+
+    private String doGenerateToken(Map<String, Object> claims, String subject, String role) {
         long generationTime = System.currentTimeMillis();
         Key key = Keys.hmacShaKeyFor(secret.getBytes());
+
+        claims.put("role", role); // Adăugăm rolul în claims
+
         return Jwts.builder().setClaims(claims).setSubject(subject)
                 .setIssuedAt(new Timestamp(generationTime))
                 .setExpiration(new Timestamp(generationTime + JWT_TOKEN_VALIDITY))
                 .signWith(key, SignatureAlgorithm.HS512).compact();
     }
 
-    public String generateJwtToken(final String subject) {
-        return doGenerateToken(new HashMap<>(), subject);
+    public String generateJwtToken(final String subject, final String role) {
+        return doGenerateToken(new HashMap<>(), subject, role);
     }
+
+//    public String generateJwtToken(final String subject) {
+//        return doGenerateToken(new HashMap<>(), subject);
+//    }
 
     public String getEmailFromToken(String token){
         return getClaimFromToken(token, Claims::getSubject);
     }
+    public String getRoleFromToken(String token){
+        return getClaimFromToken(token, claims -> claims.get("role", String.class));
+    }
 
-    public void validateToken(String token, String subject)
+//    public void validateToken(String token, String subject)
+//            throws InvalidTokenException, ExpiredTokenException {
+//        if (!subject.equals(getEmailFromToken(token))) {
+//            throw new InvalidTokenException();
+//        }
+//        if (isTokenExpired(token)) {
+//            throw new ExpiredTokenException();
+//        }
+//    }
+    public void validateToken(String token, String subject, String expectedRole)
             throws InvalidTokenException, ExpiredTokenException {
         if (!subject.equals(getEmailFromToken(token))) {
             throw new InvalidTokenException();
         }
         if (isTokenExpired(token)) {
             throw new ExpiredTokenException();
+        }
+        String role = getClaimFromToken(token, claims -> claims.get("role", String.class));
+        if (role == null || !role.equals(expectedRole)) {
+            throw new InvalidTokenException();
         }
     }
 }

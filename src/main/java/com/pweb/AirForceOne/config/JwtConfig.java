@@ -17,7 +17,7 @@ public class JwtConfig {
         var filterBean = new FilterRegistrationBean<JwtFilter>();
         filterBean.setFilter(jwtFilter);
         filterBean.addUrlPatterns(
-                "/users/*"
+                "/client/data"
         );
         return filterBean;
     }
