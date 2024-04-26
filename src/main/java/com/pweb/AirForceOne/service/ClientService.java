@@ -5,6 +5,7 @@ import com.pweb.AirForceOne.exceptions.ClientExistsException;
 import com.pweb.AirForceOne.exceptions.ClientNotFound;
 import com.pweb.AirForceOne.exceptions.WrongPasswordException;
 import com.pweb.AirForceOne.model.Client;
+import com.pweb.AirForceOne.repository.BookingRepository;
 import com.pweb.AirForceOne.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,6 +17,7 @@ import java.time.ZonedDateTime;
 @RequiredArgsConstructor
 public class ClientService {
     private final ClientRepository clientRepository;
+    private final BookingRepository bookingRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -46,5 +48,12 @@ public class ClientService {
                 clientRepository.findByEmail(email).orElseThrow(ClientNotFound::new),
                 ClientDto.class
         );
+    }
+
+    public void deleteClient(String email) {
+        var client = clientRepository.findByEmail(email).orElseThrow(ClientNotFound::new);
+        // for each booking, make the client_id null
+        bookingRepository.findAllByClient(client.getId()).forEach( booking -> booking.setClient(null));
+        clientRepository.delete(client);
     }
 }

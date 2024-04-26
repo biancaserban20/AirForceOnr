@@ -26,12 +26,12 @@ public class Booking {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "client_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "flight_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "flight_id", referencedColumnName = "id")
     private Flight flight;
 
     @JsonIgnore

@@ -29,6 +29,6 @@ public class Client {
     private ZonedDateTime createdAt;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "client", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private Set<Booking> bookings;
 }

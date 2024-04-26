@@ -12,6 +12,8 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/client")
@@ -26,7 +28,8 @@ public class ClientController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> loginClient(@RequestBody ClientDto clientDto) {
+    public ResponseEntity<Void> loginClient(@RequestBody Map<String, String> credentials) {
+        ClientDto clientDto = new ClientDto("A", "A", credentials.get("email"), credentials.get("password"));
         clientService.loginClient(clientDto);
         String jwtToken = jwtTokenResolver.generateJwtToken(clientDto.getEmail(), "client");
         return ResponseEntity
@@ -45,6 +48,18 @@ public class ClientController {
         String username = jwtTokenResolver.getEmailFromToken(jwtToken);
         ClientDto client = clientService.getClientData(username);
         return ResponseEntity.status(HttpStatus.OK).body(client);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteClient(HttpServletRequest http, @RequestBody Map<String, String> map) {
+//        String jwtToken = http.getHeader("Authorization").substring(7);
+//        String role = jwtTokenResolver.getRoleFromToken(jwtToken);
+//        if (!role.equals("client")) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        }
+//        String username = jwtTokenResolver.getEmailFromToken(jwtToken);
+        clientService.deleteClient(map.get("email"));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }
